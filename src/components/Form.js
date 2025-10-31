@@ -46,6 +46,7 @@ const PropertyForm = () => {
           setLocation({ lat: latitude, lng: longitude });
         },
         () => {
+          console.log("Geolocation denied — using default");
           setCurrentPosition([12.9716, 77.5946]); // Default: Bangalore
         }
       );
@@ -105,6 +106,7 @@ const PropertyForm = () => {
         );
         
         imageUrls.push(response.data.secure_url);
+        console.log(imageUrls);
       }
 
       // Step 2: Prepare data with image URLs
@@ -124,6 +126,7 @@ const PropertyForm = () => {
         }
       );
 
+      console.log("Property submitted successfully ✅", propertyData);
       if (result?.data?.message) {
         alert(result.data.message);
         dispatch(toggleOnSubmit());
@@ -144,6 +147,7 @@ const PropertyForm = () => {
       navigate(username ? `/${username}/dashboard` : "/");
       
     } catch (error) {
+      console.error("Error submitting property:", error);
       alert(error?.response?.data?.message || "Failed to submit property. Please try again.");
     } finally {
       setIsSubmitting(false);

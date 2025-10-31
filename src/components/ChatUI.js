@@ -96,6 +96,7 @@ export default function ChatUI() {
         
         // Update map center if lat and lng are provided
         if (updatedContext?.lat != null && updatedContext?.lng != null) {
+          console.log("updatedContext", updatedContext.lat, updatedContext.lng);
           dispatch(setCenter({ 
             lat: updatedContext.lat, 
             lng: updatedContext.lng 
@@ -105,14 +106,18 @@ export default function ChatUI() {
 
       // Update Redux with infrastructure data
       if (infrastructureData && infrastructureData.data) {
+        console.log("infrastructureData", infrastructureData.data);
         dispatch(setData(infrastructureData.data));
       }
 
       // Update Redux with properties
       if (properties && properties.length >= 0) {
+        console.log("properties", properties);
         dispatch(setProperties(properties));
       }
     } catch (error) {
+      console.error("Error sending message:", error);
+      
       // Display error message in chat
       const errorMessage = error.response?.data?.message || "Sorry, I encountered an error. Please try again.";
       setMessages((prev) => [

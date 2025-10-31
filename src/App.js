@@ -12,6 +12,7 @@ import Dashboard from './components/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserPosts } from './store/appSlice';
+import axios from 'axios';
 
 // A small bootstrapper that runs inside Provider to fetch user posts when authenticated
 const AuthBootstrapper = () => {
@@ -21,14 +22,24 @@ const AuthBootstrapper = () => {
 
   useEffect(() => {
     if (isAuthenticated !== true) return;
-      fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/property/myposts`, { credentials: 'include' })
-      .then((res) => (res.ok ? res.json() : Promise.reject(res)))
-      .then((data) => {
-        const properties = (data && data.properties) ? data.properties : [];
+    
+    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+    console.log('🔍 Fetching user posts from:', `${apiUrl}/api/property/myposts`);
+    
+    axios.get(`${apiUrl}/api/property/myposts`, {
+      withCredentials: true
+    })
+      .then((response) => {
+        console.log('✅ User posts response:', response.data);
+        const properties = (response.data && response.data.properties) ? response.data.properties : [];
+        console.log('📋 Properties found:', properties.length);
         dispatch(setUserPosts(properties));
       })
       .catch((err) => {
-        // Silently handle error
+        console.error('❌ Failed to fetch user posts', err);
+        console.error('Error status:', err.response?.status);
+        console.error('Error data:', err.response?.data);
+        console.error('Error message:', err.message);
       });
   }, [isAuthenticated, onSubmit, dispatch]);
 
