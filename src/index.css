@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for marker colors */
+.grey-marker {
+  filter: grayscale(100%) brightness(0.5);
+}
