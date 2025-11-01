@@ -2,7 +2,7 @@ import React from "react";
 import { GeoJSON, Marker } from "react-leaflet";
 import L from "leaflet";
 
-const Markers = ({ data, properties, layerToggles, onPropertyClick }) => {
+const Markers = ({ data, properties, layerToggles, selectedProperty, onPropertyClick }) => {
   // Create custom marker icon dynamically based on layer name
   const createIcon = (layerName) => {
     return L.icon({
@@ -64,6 +64,46 @@ const Markers = ({ data, properties, layerToggles, onPropertyClick }) => {
             }}
           />
         ))}
+
+      {/* Render BMTC and Metro markers for selected property */}
+      {selectedProperty && (
+        <>
+          {selectedProperty.nearestBmtcstop && (
+            Array.isArray(selectedProperty.nearestBmtcstop) ? (
+              selectedProperty.nearestBmtcstop.map((stop, idx) => (
+                <Marker
+                  key={`bmtc-${selectedProperty._id}-${idx}`}
+                  position={[
+                    stop.geometry.coordinates[1],
+                    stop.geometry.coordinates[0]
+                  ]}
+                  icon={createIcon("bmtcstops")}
+                />
+              ))
+            ) : (
+              <Marker
+                key={`bmtc-${selectedProperty._id}`}
+                position={[
+                  selectedProperty.nearestBmtcstop.geometry.coordinates[1],
+                  selectedProperty.nearestBmtcstop.geometry.coordinates[0]
+                ]}
+                icon={createIcon("bmtcstops")}
+              />
+            )
+          )}
+          
+          {selectedProperty.nearestMetrostation && (
+            <Marker
+              key={`metro-${selectedProperty._id}`}
+              position={[
+                selectedProperty.nearestMetrostation.geometry.coordinates[1],
+                selectedProperty.nearestMetrostation.geometry.coordinates[0]
+              ]}
+              icon={createIcon("metrostations")}
+            />
+          )}
+        </>
+      )}
     </>
   );
 };

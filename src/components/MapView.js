@@ -15,6 +15,7 @@ const MapView = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [layerToggles, setLayerToggles] = useState({});
+  const [previousToggles, setPreviousToggles] = useState(null);
 
   const ChangeView = ({ center }) => {
     const map = useMap();
@@ -41,6 +42,24 @@ const MapView = () => {
       }
     }
   }, [data,layerToggles]);
+
+  // Toggle layers when property is selected or deselected
+  useEffect(() => {
+    if (selectedProperty) {
+      // Store current toggles
+      setPreviousToggles({ ...layerToggles });
+      // Turn off all layers
+      const allOff = {};
+      Object.keys(layerToggles).forEach(key => {
+        allOff[key] = false;
+      });
+      setLayerToggles(allOff);
+    } else if (previousToggles) {
+      // Restore previous toggles
+      setLayerToggles(previousToggles);
+      setPreviousToggles(null);
+    }
+  }, [selectedProperty]);
 
   const handlePostAd = () => {
     if (isAuthenticated && user) {
@@ -117,6 +136,7 @@ const MapView = () => {
           data={data}
           properties={properties}
           layerToggles={layerToggles}
+          selectedProperty={selectedProperty}
           onPropertyClick={(property) => dispatch(setSelectedProperty(property))}
         />
       </MapContainer>
